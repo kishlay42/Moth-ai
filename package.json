@@ -1,6 +1,6 @@
 {
   "name": "@kishlay42/moth-ai",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Local, LLM-agnostic code intelligence CLI",
   "main": "dist/index.js",
   "bin": {
