@@ -1,5 +1,5 @@
 {
-  "name": "moth-ai",
+  "name": "@kishlay42/moth-ai",
   "version": "1.0.0",
   "description": "Local, LLM-agnostic code intelligence CLI",
   "main": "dist/index.js",
@@ -32,6 +32,10 @@
   ],
   "author": "Moth Contributor",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kishlay42/Moth-ai.git"
+  },
   "type": "module",
   "devDependencies": {
     "@types/diff": "^7.0.2",
