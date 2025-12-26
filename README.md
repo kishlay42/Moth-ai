@@ -57,8 +57,17 @@ Save and switch between different AI personalities.
 - **Fast Profile** – Lightweight local model for quick answers  
 
 ---
-
 ## 🚀 Installation
 
+### Global (recommended)
 ```bash
 npm install -g @kishlay42/moth-ai
+```
+
+### Project-local
+```
+npm install @kishlay42/moth-ai
+npx moth
+```
+
+
