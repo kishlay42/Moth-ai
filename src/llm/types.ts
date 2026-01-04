@@ -1,6 +1,7 @@
 export interface LLMMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;
+  attachedFiles?: string[]; // File paths referenced with @
 }
 
 export interface LLMResponseStream {

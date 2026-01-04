@@ -124,11 +124,12 @@ program.command('use')
     let config = loadConfig();
     if (!name) {
         console.log("No active profile selected. Please select one:");
-        render(React.createElement(ProfileManager, { 
+        const { unmount } = render(React.createElement(ProfileManager, { 
             config,
             onSelect: (selected) => {
                  // onSelect saves internally
-                 process.exit(0);
+                 unmount();
+                 setTimeout(() => startChatSession(), 500);
             }
         }));
         return;
@@ -151,9 +152,12 @@ program.command('remove')
   .action(async (name?: string) => {
     let config = loadConfig();
     if (!name) {
-        render(React.createElement(LLMRemover, { 
+        const { unmount } = render(React.createElement(LLMRemover, { 
             config,
-            onExit: () => process.exit(0)
+            onExit: () => {
+                unmount();
+                setTimeout(() => startChatSession(), 500);
+            }
         }));
         return;
     }
@@ -173,25 +177,27 @@ program.command('add')
   .action(async (options) => {
      // Re-use exactly the same logic as llm add
      if (!options.name && !options.provider && !options.model) {
-         render(React.createElement(LLMWizard, {
-             onComplete: async (resultConfig: any) => {
-                 let config = loadConfig();
-                 config = addProfile(config, resultConfig);
-                 if (resultConfig.apiKey) {
-                     await setApiKey(resultConfig.name, resultConfig.apiKey);
-                 }
-                 config = setActiveProfile(config, resultConfig.name);
-                 saveConfig(config);
-                 console.log(`Profile '${resultConfig.name}' created.`);
-                 
-                 // Chain to main chat
-                 process.exit(0); // For now, just exit as per current wizard
-             },
-             onCancel: () => {
-                 console.log('Setup cancelled.');
-                 process.exit(0);
-             }
-         }));
+          const { unmount } = render(React.createElement(LLMWizard, {
+              onComplete: async (resultConfig: any) => {
+                  let config = loadConfig();
+                  config = addProfile(config, resultConfig);
+                  if (resultConfig.apiKey) {
+                      await setApiKey(resultConfig.name, resultConfig.apiKey);
+                  }
+                  config = setActiveProfile(config, resultConfig.name);
+                  saveConfig(config);
+                  console.log(`Profile '${resultConfig.name}' created.`);
+                  
+                  // Redirect to chat
+                  unmount();
+                  setTimeout(() => startChatSession(), 500);
+              },
+              onCancel: () => {
+                  console.log('Setup cancelled.');
+                  unmount();
+                  setTimeout(() => startChatSession(), 500);
+              }
+          }));
          return;
      }
      
@@ -245,25 +251,27 @@ llm.command('add')
   .action(async (options) => {
      // If no options provided, launch wizard
      if (!options.name && !options.provider && !options.model) {
-         render(React.createElement(LLMWizard, {
-             onComplete: async (resultConfig: any) => {
-                 let config = loadConfig();
-                 config = addProfile(config, resultConfig);
-                 if (resultConfig.apiKey) {
-                     await setApiKey(resultConfig.name, resultConfig.apiKey);
-                 }
-                 if (config.profiles.length === 1) {
-                     config = setActiveProfile(config, resultConfig.name);
-                 }
-                 saveConfig(config);
-                 console.log(`Profile '${resultConfig.name}' added successfully!`);
-                 process.exit(0);
-             },
-             onCancel: () => {
-                 console.log('Setup cancelled.');
-                 process.exit(0);
-             }
-         }));
+          const { unmount } = render(React.createElement(LLMWizard, {
+              onComplete: async (resultConfig: any) => {
+                  let config = loadConfig();
+                  config = addProfile(config, resultConfig);
+                  if (resultConfig.apiKey) {
+                      await setApiKey(resultConfig.name, resultConfig.apiKey);
+                  }
+                  if (config.profiles.length === 1) {
+                      config = setActiveProfile(config, resultConfig.name);
+                  }
+                  saveConfig(config);
+                  console.log(`Profile '${resultConfig.name}' added successfully!`);
+                  unmount();
+                  setTimeout(() => startChatSession(), 500);
+              },
+              onCancel: () => {
+                  console.log('Setup cancelled.');
+                  unmount();
+                  setTimeout(() => startChatSession(), 500);
+              }
+          }));
          return;
      }
 
@@ -327,9 +335,12 @@ llm.command('remove')
     let config = loadConfig();
     
     if (!name) {
-        render(React.createElement(LLMRemover, { 
+        const { unmount } = render(React.createElement(LLMRemover, { 
             config,
-            onExit: () => process.exit(0)
+            onExit: () => {
+                unmount();
+                setTimeout(() => startChatSession(), 500);
+            }
         }));
         return;
     }

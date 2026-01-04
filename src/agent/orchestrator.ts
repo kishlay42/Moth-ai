@@ -1,15 +1,20 @@
 import { AgentConfig, AgentState, AgentStep } from './types.js';
 import { ToolRegistry } from '../tools/registry.js';
 import { LLMMessage } from '../llm/types.js';
+import { formatFileForContext, truncateFileContent } from '../utils/fileUtils.js';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 
 export class AgentOrchestrator {
   private config: AgentConfig;
   private state: AgentState;
   private tools: ToolRegistry;
+  private root: string;
 
-  constructor(config: AgentConfig, registry: ToolRegistry) {
+  constructor(config: AgentConfig, registry: ToolRegistry, root: string = process.cwd()) {
     this.config = config;
     this.tools = registry;
+    this.root = root;
     this.state = {
       history: [],
       maxSteps: config.maxSteps || 10
@@ -20,8 +25,11 @@ export class AgentOrchestrator {
     let currentPrompt = prompt;
 
     for (let i = 0; i < this.state.maxSteps; i++) {
-        // Construct system prompt with tools
-        const systemPrompt = this.buildSystemPrompt();
+        // Collect all attached files from history
+        const allAttachedFiles = this.collectAttachedFiles(history);
+        
+        // Construct system prompt with tools and file context
+        const systemPrompt = await this.buildSystemPrompt(allAttachedFiles);
         
         // Full context: System -> History -> Current State
         const messages: LLMMessage[] = [
@@ -67,20 +75,28 @@ export class AgentOrchestrator {
     return "Max steps reached.";
   }
 
-  private buildSystemPrompt(): string {
+  private async buildSystemPrompt(attachedFiles: string[] = []): Promise<string> {
     const toolDefs = this.tools.getDefinitions().map(t => 
         `${t.name}: ${t.description} Params: ${JSON.stringify(t.parameters)}`
     ).join('\n');
 
+    let fileContext = '';
+    if (attachedFiles.length > 0) {
+      fileContext = await this.buildFileContext(attachedFiles);
+    }
+
     return `You are Moth, an intelligent CLI coding assistant.
 You have access to the following tools:
 ${toolDefs}
+
+${fileContext}
 
 IMPORTANT GUIDELINES:
 1. For general questions, explanations, or code snippets that don't need to be saved, use "finalAnswer". 
 2. Do NOT use "write_to_file" unless the user explicitly asks to save a file or implies a persistent change.
 3. If the user asks for "Hello World code", just show it in the explanation (finalAnswer). Do NOT create a file for it.
 4. Be concise and helpful.
+5. If files are referenced above, use that context to answer questions about them.
 
 Format your response exactly as a JSON object:
 {
@@ -93,6 +109,40 @@ OR if you are done/replying:
   "finalAnswer": "your response/code/explanation"
 }
 `;
+  }
+
+  private collectAttachedFiles(history: LLMMessage[]): string[] {
+    const files = new Set<string>();
+    for (const msg of history) {
+      if (msg.attachedFiles) {
+        msg.attachedFiles.forEach(f => files.add(f));
+      }
+    }
+    return Array.from(files);
+  }
+
+  private async buildFileContext(filePaths: string[]): Promise<string> {
+    const fileContents: string[] = ['=== Referenced Files ===\n'];
+    
+    for (const filePath of filePaths) {
+      try {
+        const fullPath = path.join(this.root, filePath);
+        // Security: Prevent breaking out of root
+        if (!fullPath.startsWith(this.root)) {
+          fileContents.push(`File: ${filePath}\nError: Access denied (outside project root)\n`);
+          continue;
+        }
+        
+        const content = await fs.readFile(fullPath, 'utf-8');
+        const truncated = truncateFileContent(content, 500);
+        const formatted = formatFileForContext(filePath, truncated);
+        fileContents.push(formatted);
+      } catch (e: any) {
+        fileContents.push(`File: ${filePath}\nError: ${e.message}\n`);
+      }
+    }
+    
+    return fileContents.join('\n');
   }
 
   private async callLLM(messages: any[]): Promise<string> {
