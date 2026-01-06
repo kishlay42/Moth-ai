@@ -5,7 +5,7 @@
 
 > **The World's First Truly Open CLI Assistant for Local & Open Source Models**
 
-`[PLACEHOLDER: Initial Header Image - A sleek, high-contrast terminal screenshot showing the Moth AI welcome screen with the chromatic logo and system status. Ideally captures the moment of initialization.]`
+<img width="953" height="392" alt="Screenshot 2026-01-07 013431" src="https://github.com/user-attachments/assets/55e104e2-8441-4a74-b3f7-c74340d806fa" />
 
 ---
 
@@ -25,7 +25,6 @@ Moth is the only CLI tool designed to democratize AI access.
 - **Open Source First:** We support any OpenAI-compatible endpoint, making it universally compatible with the open ecosystem of model servers (LM Studio, LocalAI, etc.).
 - **Cloud Optional:** Seamlessly integrate OpenAI (GPT-4), Anthropic (Claude), or Google (Gemini) when you need extra horsepower—but only when *you* choose to.
 
-`[PLACEHOLDER: LLM Switch Image - A split view showing the command palette being used to instantly toggle between a local Ollama model and GPT-4, demonstrating the speed and ease of switching contexts.]`
 
 ### 🤖 Agentic Capabilities with Role-Based Modes
 Moth operates in three distinct modes to match your current task intensity:
@@ -34,7 +33,9 @@ Moth operates in three distinct modes to match your current task intensity:
 2. **� Plan Mode:** Prioritizes detailed architectural planning. Moth creates comprehensive markdown plans for review before writing a single line of code.
 3. **🚀 Autopilot Mode:** For trusted workflows. Moth executes authorized tool calls automatically, streamlining repetitive tasks.
 
-`[PLACEHOLDER: Mode Toggling Image - A sequence showing the visual mode indicator in the bottom-left corner changing from 'DEFAULT' (Blue) to 'PLAN' (Magenta) to 'AUTOPILOT' (Yellow) via the Ctrl+B shortcut.]`
+<img width="948" height="112" alt="Screenshot 2026-01-07 003822" src="https://github.com/user-attachments/assets/ff14a463-157d-4107-8de1-519257355989" />
+
+<img width="940" height="108" alt="Screenshot 2026-01-07 003744" src="https://github.com/user-attachments/assets/345509dd-a89a-4b78-83df-9c21c51f4e82" />
 
 ### 🛡️ Secure & Transparent
 - **Permission-First Architecture:** You approve every significant file edit or shell command.
@@ -75,7 +76,7 @@ npx moth-ai
     ```bash
     moth llm add
     ```
-    `[PLACEHOLDER: New LLM Add Image - A screenshot sequence showing the interactive wizard for adding a new LLM profile, highlighting the clean UI for selecting providers and entering API keys.]`
+<img width="611" height="379" alt="image" src="https://github.com/user-attachments/assets/a90c54ee-54f7-4391-a29f-f2bdf40d5709" />
 
 3.  **Execute Commands:**
     - **Chat:** Simply type your query.
@@ -83,31 +84,7 @@ npx moth-ai
     - **Switch Modes:** Press `Ctrl+B` to cycle operational modes.
 
 ---
-
-## �️ Configuration
-
-Configuration is stored in `~/.moth/config.yaml`, allowing for portable and easy management of your AI profiles.
-
-```yaml
-profiles:
-  - name: "production-gpt4"
-    provider: "openai"
-    model: "gpt-4"
-    apiKey: "sk-..."
-  - name: "local-dev"
-    provider: "ollama"
-    model: "llama3"
-    baseUrl: "http://localhost:11434"
-activeProfile: "local-dev"
-mode: "default"
 ```
 
----
-
-## 🤝 Contributing
-
-We welcome contributions from the community. Please review our [contribution guidelines](CONTRIBUTING.md) before submitting pull requests.
-
----
-
 *Moth AI — Coding at the speed of thought.*
+
