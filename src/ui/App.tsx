@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Box, Text, useInput, Newline } from 'ink';
 import * as os from 'os';
 import { LLMClient, LLMMessage } from '../llm/types.js';
-import { LLMProfile, Config, loadConfig, saveConfig, addProfile } from '../config/configManager.js';
+import { LLMProfile, Config, loadConfig, saveConfig, addProfile, setMode as saveMode } from '../config/configManager.js';
+import { MothMode, MODES } from '../types/modes.js';
 import { TodoManager } from '../planning/todoManager.js';
 import { AgentOrchestrator } from '../agent/orchestrator.js';
 import { createToolRegistry } from '../tools/factory.js';
@@ -14,6 +15,7 @@ import { WordMoth } from './components/WordMoth.js';
 import { FileChip } from './components/FileChip.js';
 import { FileAutocomplete } from './components/FileAutocomplete.js';
 import { CommandPalette } from './components/CommandPalette.js';
+import { MarkdownText } from './components/MarkdownText.js';
 import { ProfileManager } from './ProfileManager.js';
 import { LLMWizard } from './wizards/LLMWizard.js';
 import { LLMRemover } from './wizards/LLMRemover.js';
@@ -36,9 +38,14 @@ export const App: React.FC<Props> = ({ command, args, todoManager: propTodoManag
   const [showWelcome, setShowWelcome] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
   
-  const [autopilot, setAutopilot] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [thinkingText, setThinkingText] = useState('Sauting...');
+  
+  // Mode State
+  const [mode, setMode] = useState<MothMode>(() => {
+    const config = loadConfig();
+    return config.mode || 'default';
+  });
 
   // File Reference State
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
@@ -117,7 +124,8 @@ export const App: React.FC<Props> = ({ command, args, todoManager: propTodoManag
         
         // Permission Callback
         const checkPermission = async (toolName: string, args: any): Promise<PermissionResponse> => {
-            if (autopilot) {
+            // Auto-approve if in autopilot mode
+            if (mode === 'autopilot') {
                 return { allowed: true };
             }
             return new Promise((resolve) => {
@@ -249,11 +257,11 @@ export const App: React.FC<Props> = ({ command, args, todoManager: propTodoManag
     
     switch (action) {
       case 'autopilot':
-        setAutopilot(prev => !prev);
-        setMessages(prev => [...prev, {
-          role: 'assistant',
-          content: `Autopilot ${!autopilot ? 'enabled' : 'disabled'}.`
-        }]);
+        // Set mode to autopilot (same as Ctrl+B cycling to autopilot)
+        setMode('autopilot');
+        const config = loadConfig();
+        const updatedConfig = saveMode(config, 'autopilot');
+        saveConfig(updatedConfig);
         break;
       case 'llm-list':
         setActiveWizard('llm-list');
@@ -315,6 +323,22 @@ export const App: React.FC<Props> = ({ command, args, todoManager: propTodoManag
       return;
     }
 
+    // Ctrl+B to cycle modes
+    if (input === 'b' && key.ctrl) {
+      const modes: MothMode[] = ['default', 'plan', 'autopilot'];
+      const currentIndex = modes.indexOf(mode);
+      const nextMode = modes[(currentIndex + 1) % modes.length];
+      setMode(nextMode);
+      
+      // Persist mode to config
+      const config = loadConfig();
+      const updatedConfig = saveMode(config, nextMode);
+      saveConfig(updatedConfig);
+      
+      // Mode indicator updates automatically, no need for notification
+      return;
+    }
+
     // ESC Pause
     if (key.escape && !showAutocomplete) {
         setIsPaused(prev => !prev);
@@ -351,7 +375,11 @@ export const App: React.FC<Props> = ({ command, args, todoManager: propTodoManag
              if (permissionSelection === 0) {
                  pendingPermission.resolve({ allowed: true });
              } else if (permissionSelection === 1) {
-                 setAutopilot(true);
+                 // Enable autopilot mode
+                 setMode('autopilot');
+                 const config = loadConfig();
+                 const updatedConfig = saveMode(config, 'autopilot');
+                 saveConfig(updatedConfig);
                  pendingPermission.resolve({ allowed: true });
              } else if (permissionSelection === 2) {
                  setFeedbackMode(true);
@@ -363,8 +391,11 @@ export const App: React.FC<Props> = ({ command, args, todoManager: propTodoManag
              // Yes - execute once
              pendingPermission.resolve({ allowed: true });
         } else if (input === 'b' || input === 'B') {
-             // Yes - autopilot
-             setAutopilot(true);
+             // Yes - enable autopilot mode
+             setMode('autopilot');
+             const config = loadConfig();
+             const updatedConfig = saveMode(config, 'autopilot');
+             saveConfig(updatedConfig);
              pendingPermission.resolve({ allowed: true });
         } else if (input === 'c' || input === 'C') {
              // Tell Moth what to do instead
@@ -442,7 +473,7 @@ export const App: React.FC<Props> = ({ command, args, todoManager: propTodoManag
               <Box flexDirection="column" marginTop={-1} paddingRight={1}>
                   <WordMoth text="MOTH" big />
                   <Box marginTop={-1}>
-                      <Text dimColor>v1.0.0</Text>
+                      <Text dimColor>v1.0.4</Text>
                   </Box>
                   <Text color="#3EA0C3">Welcome, {username || os.userInfo().username}</Text>
               </Box>
@@ -460,11 +491,15 @@ export const App: React.FC<Props> = ({ command, args, todoManager: propTodoManag
       {messages.length > 0 && (
           <Box flexDirection="column" marginBottom={1}>
             {messages.map((m, i) => (
-                <Box key={i} flexDirection="row" marginBottom={1}>
+                <Box key={i} flexDirection="column" marginBottom={1}>
                     <Text color={m.role === 'user' ? 'blue' : 'green'} bold>
                         {m.role === 'user' ? 'You' : 'Moth'}: 
                     </Text>
-                    <Text> {m.content}</Text>
+                    {m.role === 'assistant' ? (
+                        <MarkdownText content={m.content} />
+                    ) : (
+                        <Text> {m.content}</Text>
+                    )}
                 </Box>
             ))}
           </Box>
@@ -516,10 +551,7 @@ export const App: React.FC<Props> = ({ command, args, todoManager: propTodoManag
                   </Box>
               )}
               
-              {/* Autopilot Indicator */}
-              {autopilot && (
-                  <Text color="magenta">AUTOPILOT MODE</Text>
-              )}
+
 
               {/* Selected Files Chips - Collapsible */}
               {selectedFiles.length > 0 && (
@@ -586,8 +618,18 @@ export const App: React.FC<Props> = ({ command, args, todoManager: propTodoManag
                 />
               )}
 
-              <Box flexDirection="row" justifyContent="flex-end">
-                  <Text color="gray" dimColor>{activeProfile?.name}</Text>
+              {/* Bottom Status Line - Mode (left) and Profile (right) */}
+              <Box flexDirection="row" justifyContent="space-between">
+                {/* Mode Indicator - Left */}
+                <Box flexDirection="row">
+                  <Text color={MODES[mode].color}>
+                    {MODES[mode].icon} {MODES[mode].displayName.toUpperCase()} MODE
+                  </Text>
+                  <Text dimColor> | Ctrl+B to switch</Text>
+                </Box>
+                
+                {/* Profile - Right */}
+                <Text color="gray" dimColor>{activeProfile?.name}</Text>
               </Box>
           </Box>
       )}

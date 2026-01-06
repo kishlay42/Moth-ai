@@ -16,6 +16,7 @@ export interface Config {
   activeProfile?: string;
   profiles: LLMProfile[];
   username?: string;
+  mode?: 'default' | 'plan' | 'autopilot'; // NEW: Current mode
 }
 
 const CONFIG_FILE = path.join(CONFIG_DIR, 'profiles.yaml');
@@ -37,7 +38,8 @@ export function loadConfig(): Config {
     return {
        profiles: parsed?.profiles || [],
        activeProfile: parsed?.activeProfile,
-       username: parsed?.username
+       username: parsed?.username,
+       mode: parsed?.mode || 'default' // Default to 'default' mode
     };
   } catch (e) {
     // console.error('Failed to load config, using default', e); 
@@ -79,5 +81,10 @@ export function setActiveProfile(config: Config, name: string): Config {
 
 export function setUsername(config: Config, username: string): Config {
   config.username = username;
+  return config;
+}
+
+export function setMode(config: Config, mode: 'default' | 'plan' | 'autopilot'): Config {
+  config.mode = mode;
   return config;
 }

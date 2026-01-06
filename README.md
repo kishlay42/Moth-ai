@@ -1,319 +1,113 @@
 # 🦋 Moth AI
 
-[![npm version](https://img.shields.io/npm/v/@kishlay42/moth-ai.svg)](https://www.npmjs.com/package/@kishlay42/moth-ai)
+[![npm version](https://img.shields.io/npm/v/moth-ai.svg)](https://www.npmjs.com/package/moth-ai)
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
-[![Node.js Version](https://img.shields.io/node/v/@kishlay42/moth-ai.svg)](https://nodejs.org)
 
-**The Intelligent, Local-First CLI Coding Assistant**
+> **The World's First Truly Open CLI Assistant for Local & Open Source Models**
 
-Moth AI is a powerful **terminal-native coding assistant** built for developers who value **privacy, speed, and control**. It lives inside your terminal, understands your project context, and helps you **write, debug, refactor, and reason about code** using both **local and cloud LLMs**.
+`[PLACEHOLDER: Initial Header Image - A sleek, high-contrast terminal screenshot showing the Moth AI welcome screen with the chromatic logo and system status. Ideally captures the moment of initialization.]`
 
-<img width="1095" height="504" alt="Moth AI Screenshot" src="https://github.com/user-attachments/assets/23b83a6b-2b63-45af-b9ec-a6dcb0a89b2f" />
+---
+
+## Overview
+
+Moth AI is the **first terminal-native coding assistant** built from the ground up to treat **local and open-source LLMs** as first-class citizens. While others lock you into proprietary models or cloud subscripts, Moth is truly open source—in code, philosophy, and model support.
+
+It empowers you to **write, debug, refactor, and reason about code** using **your own models** on **your own hardware**. Whether you're running Llama 3 on a MacBook or GPT-4 in the cloud, Moth gives you the same powerful agentic capabilities without the compromise.
+
+---
+
+## 🚀 Key Features
+
+### 🔓 Truly Open & Local-First
+Moth is the only CLI tool designed to democratize AI access.
+- **Local Native:** Optimized deeply for Ollama. Run **Llama 3, Mistral, Gemma, or DeepSeek** locally with zero latency, 100% privacy, and no internet connection required.
+- **Open Source First:** We support any OpenAI-compatible endpoint, making it universally compatible with the open ecosystem of model servers (LM Studio, LocalAI, etc.).
+- **Cloud Optional:** Seamlessly integrate OpenAI (GPT-4), Anthropic (Claude), or Google (Gemini) when you need extra horsepower—but only when *you* choose to.
+
+`[PLACEHOLDER: LLM Switch Image - A split view showing the command palette being used to instantly toggle between a local Ollama model and GPT-4, demonstrating the speed and ease of switching contexts.]`
+
+### 🤖 Agentic Capabilities with Role-Based Modes
+Moth operates in three distinct modes to match your current task intensity:
+
+1. **🔵 Default Mode:** A balanced assistant that asks for permission before executing sensitive actions.
+2. **� Plan Mode:** Prioritizes detailed architectural planning. Moth creates comprehensive markdown plans for review before writing a single line of code.
+3. **🚀 Autopilot Mode:** For trusted workflows. Moth executes authorized tool calls automatically, streamlining repetitive tasks.
+
+`[PLACEHOLDER: Mode Toggling Image - A sequence showing the visual mode indicator in the bottom-left corner changing from 'DEFAULT' (Blue) to 'PLAN' (Magenta) to 'AUTOPILOT' (Yellow) via the Ctrl+B shortcut.]`
+
+### 🛡️ Secure & Transparent
+- **Permission-First Architecture:** You approve every significant file edit or shell command.
+- **Context-Aware:** Moth intelligently scans your project structure to provide relevant answers, not hallucinations.
 
 ---
 
 ## 📦 Installation
 
 ### Global Installation (Recommended)
-
-Install Moth AI globally to use it anywhere on your system:
-
-```bash
-npm install -g @kishlay42/moth-ai
-```
-
-After installation, simply run:
+Install Moth AI globally to access the `moth` command from any directory.
 
 ```bash
-moth
+npm install -g moth-ai
 ```
 
 ### Local Installation
-
-Install in a specific project:
-
-```bash
-npm install @kishlay42/moth-ai
-```
-
-Run using npx:
+For project-specific constraints.
 
 ```bash
-npx moth
+npm install moth-ai
+npx moth-ai
 ```
 
-### Requirements
-
-- **Node.js**: >= 18.0.0
-- **npm**: >= 8.0.0
+**Requirements:** Node.js >= 18.0.0
 
 ---
 
-## 🚀 Quick Start
+## ⚡ Quick Start
 
-1. **Install Moth AI globally:**
-   ```bash
-   npm install -g @kishlay42/moth-ai
-   ```
+1.  **Initialize Moth:**
+    ```bash
+    moth
+    ```
 
-2. **Add your first LLM profile:**
-   ```bash
-   moth llm add
-   ```
-   
-   Choose from:
-   - **Local models** (via Ollama) - Free, private, offline
-   - **Cloud providers** (OpenAI, Anthropic, Google) - Requires API key
+2.  **Configure Your First Profile:**
+    Run the interactive setup wizard to connect your preferred model.
+    ```bash
+    moth llm add
+    ```
+    `[PLACEHOLDER: New LLM Add Image - A screenshot sequence showing the interactive wizard for adding a new LLM profile, highlighting the clean UI for selecting providers and entering API keys.]`
 
-3. **Start chatting:**
-   ```bash
-   moth
-   ```
-
-4. **Use the command palette:**
-   - Press `Ctrl+U` to access all commands
-   - Switch profiles, toggle autopilot, and more
+3.  **Execute Commands:**
+    - **Chat:** Simply type your query.
+    - **Command Palette:** Press `Ctrl+U` to manage profiles and settings.
+    - **Switch Modes:** Press `Ctrl+B` to cycle operational modes.
 
 ---
 
-## ✨ Key Features
+## �️ Configuration
 
-### 🧠 LLM-Agnostic & Local-First
-
-Use **any LLM**, local or cloud — switch instantly without changing workflows.
-
-- **Local (via Ollama)**  
-  Run models like **Llama 3**, **Mistral**, **Gemma**, and **DeepSeek-Coder** locally  
-  → Zero latency, full privacy, offline-friendly
-
-- **Cloud Providers**  
-  Plug in your own API keys for:
-  - OpenAI (GPT-4 / GPT-4o)
-  - Anthropic (Claude 3.5 Sonnet)
-  - Google (Gemini)
-
-<img width="1093" height="241" alt="LLM Switching" src="https://github.com/user-attachments/assets/2de67c9d-f562-4ce3-8bc6-51e2066b69ae" />
-
----
-
-### 🤖 Agentic Capabilities
-
-Moth is not just a chatbot — it's an **AI agent**.
-
-- **Task Planning** – Break complex goals into executable steps  
-- **File Editing** – Precise diffs, patches, and refactors  
-- **Terminal Control** – Run builds, tests, and Git commands from chat  
-- **Context-Aware** – Understands your project structure and codebase
-
----
-
-### 🛡️ Permission-First by Design
-
-You stay in control — always.
-
-- Explicit approval before file edits or command execution  
-- Granular permissions per action  
-- **Autopilot mode** for trusted workflows  
-- Feedback loop to guide the agent instead of blind execution  
-
----
-
-### 🎭 Moth Profiles
-
-Save and switch between different AI personalities.
-
-- **Coding Profile** – Optimized for TypeScript / Python  
-- **Architecture Profile** – Reasoning-focused for system design  
-- **Fast Profile** – Lightweight local model for quick answers  
-
----
-
-## � CLI Commands
-
-### Main Commands
-
-```bash
-# Start interactive chat
-moth
-
-# Show help
-moth --help
-
-# Display version
-moth --version
-```
-
-### LLM Profile Management
-
-```bash
-# Add a new LLM profile
-moth llm add
-
-# List all configured profiles
-moth llm list
-
-# Switch to a different profile
-moth llm use
-
-# Remove a profile
-moth llm remove
-```
-
-### Keyboard Shortcuts
-
-- **Ctrl+U** - Open command palette
-- **Ctrl+C** - Exit chat
-- **Arrow Keys** - Navigate command palette
-- **Enter** - Execute selected command
-
----
-
-## ⚙️ Configuration
-
-Moth AI stores configuration in `~/.moth/config.yaml`
-
-### Example Configuration
+Configuration is stored in `~/.moth/config.yaml`, allowing for portable and easy management of your AI profiles.
 
 ```yaml
 profiles:
-  - name: "gpt-4"
+  - name: "production-gpt4"
     provider: "openai"
     model: "gpt-4"
     apiKey: "sk-..."
-    
-  - name: "local-llama"
+  - name: "local-dev"
     provider: "ollama"
     model: "llama3"
     baseUrl: "http://localhost:11434"
-    
-activeProfile: "gpt-4"
+activeProfile: "local-dev"
+mode: "default"
 ```
-
-### Setting Up Ollama (Local Models)
-
-1. Install Ollama: https://ollama.ai
-2. Pull a model:
-   ```bash
-   ollama pull llama3
-   ```
-3. Add to Moth:
-   ```bash
-   moth llm add
-   # Select "Ollama" and choose your model
-   ```
-
-### Setting Up Cloud Providers
-
-#### OpenAI
-```bash
-moth llm add
-# Select "OpenAI"
-# Enter your API key from https://platform.openai.com/api-keys
-```
-
-#### Anthropic (Claude)
-```bash
-moth llm add
-# Select "Anthropic"
-# Enter your API key from https://console.anthropic.com/
-```
-
-#### Google (Gemini)
-```bash
-moth llm add
-# Select "Google"
-# Enter your API key from https://makersuite.google.com/app/apikey
-```
-
----
-
-## 💡 Usage Examples
-
-### Basic Chat
-
-```bash
-moth
-> How do I implement a binary search in TypeScript?
-```
-
-### Code Refactoring
-
-```bash
-moth
-> Refactor src/utils.ts to use async/await instead of promises
-```
-
-### Debugging
-
-```bash
-moth
-> Why is my React component re-rendering infinitely?
-```
-
-### Project Analysis
-
-```bash
-moth
-> Analyze the architecture of this project and suggest improvements
-```
-
----
-
-## 🔧 Troubleshooting
-
-### Command not found: moth
-
-Make sure the global npm bin directory is in your PATH:
-
-```bash
-npm config get prefix
-```
-
-Add the bin directory to your PATH in `~/.bashrc` or `~/.zshrc`:
-
-```bash
-export PATH="$PATH:$(npm config get prefix)/bin"
-```
-
-### Ollama connection error
-
-Ensure Ollama is running:
-
-```bash
-ollama serve
-```
-
-### API key errors
-
-Verify your API key is correctly configured:
-
-```bash
-moth llm list
-# Check if your profile shows the correct provider
-```
-
----
-
-## 📝 License
-
-ISC License - see [LICENSE](LICENSE) file for details
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-Repository: https://github.com/kishlay42/Moth-ai
+We welcome contributions from the community. Please review our [contribution guidelines](CONTRIBUTING.md) before submitting pull requests.
 
 ---
 
-## 📚 Links
-
-- **npm Package**: https://www.npmjs.com/package/@kishlay42/moth-ai
-- **GitHub**: https://github.com/kishlay42/Moth-ai
-- **Issues**: https://github.com/kishlay42/Moth-ai/issues
-
----
-
-**Made with ❤️ for developers who code in the terminal**
+*Moth AI — Coding at the speed of thought.*
